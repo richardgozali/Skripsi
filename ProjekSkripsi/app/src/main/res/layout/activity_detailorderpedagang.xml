@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".detail_pedagang"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/pb_detail_aktivitas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/ll_detail_aktivitas"
+            >
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="-2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="10"
+
+                    >
+
+                    <ImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="9"
+                        android:src="@drawable/ic_baseline_arrow_back_ios_24"
+                        android:textAlignment="center"
+
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:iconifiedByDefault="false"
+                        android:layout_marginTop="10dp"
+                        android:text="Nama Pedagang"
+                        android:textSize="20dp"
+                        android:textColor="#000000"
+                        android:textAlignment="center"
+                        android:id="@+id/tv_nama_pedagang_detail_aktivitas"
+
+                        app:queryHint="Masukan Nama Produk"
+
+                        />
+                </LinearLayout>
+
+                <fragment
+                    android:id="@+id/maps"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="10dp"
+                    >
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:orientation="vertical">
+
+
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginBottom="10dp"
+                                >
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="horizontal"
+
+                                    >
+                                    <androidx.cardview.widget.CardView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:id="@+id/btn_msg"
+
+                                        android:layout_weight="1"
+                                        >
+                                        <ImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="50dp"
+                                            android:id="@+id/kirim_pesan"
+
+                                            android:src="@drawable/ic_baseline_sms_24" />
+                                    </androidx.cardview.widget.CardView>
+
+                                    <androidx.cardview.widget.CardView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:id="@+id/btn_call"
+                                        android:layout_marginLeft="2dp"
+                                        >
+                                        <ImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="50dp"
+                                            android:layout_weight="1"
+                                            android:src="@drawable/ic_baseline_call_24" />
+
+                                    </androidx.cardview.widget.CardView>
+
+
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                                <ScrollView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/rv_detail_aktivitas_order"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="400dp"
+                                        android:orientation="vertical"
+                                        android:layout_margin="10dp"
+                                        android:layout_marginBottom="10dp" />
+                                </ScrollView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                >
+                                <TextView
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginRight="10dp"
+
+                                    android:fontFamily="@font/anton"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textAlignment="center"
+                                    android:text="Total :"
+                                    android:textSize="30dp"
+                                    android:layout_weight="1"
+                                    android:textColor=" #000000"
+                                    />
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/tv_total_order"
+                                    android:text="Rp5000"
+                                    android:textSize="30dp"
+                                    android:textAlignment="center"
+                                    android:textColor=" #000000"
+                                    android:fontFamily="@font/anton"
+                                    android:layout_weight="1"
+                                    />
+
+
+                            </LinearLayout>
+                            <Button
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="10dp"
+                                android:text="Terima Orderan"
+                                android:id="@+id/btn_update"
+                                android:background="#06a94d"
+                                android:textColor="#FFFFFF"
+                                android:visibility="gone"
+                                android:paddingBottom="10dp"
+                                />
+
+                        </LinearLayout>
+                     </ScrollView>
+                </androidx.cardview.widget.CardView>
+
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

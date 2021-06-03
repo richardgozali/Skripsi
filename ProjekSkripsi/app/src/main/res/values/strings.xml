@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">ProjekSkripsi</string>
+    <string-array name="menu">
+        <item>coba1</item>
+        <item>coba2</item>
+    </string-array>
+    <string-array name="fotomenu">
+        <item>@drawable/burger</item>
+        <item>@drawable/pizza</item>
+        <item>@drawable/ayam_goreng</item>
+
+    </string-array>
+    <string-array name="fotoproduk">
+        <item>@drawable/bawang_putih</item>
+        <item>@drawable/bawang_merah</item>
+        <item>@drawable/jahe</item>
+
+    </string-array>
+    <string-array name="home">
+        <item>Pelanggan</item>
+        <item>Pedagang Keliling</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textview">TextView</string>
+</resources>

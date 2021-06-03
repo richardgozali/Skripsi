@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment_home_pedagang">
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/pb_fragment_home"
+        android:visibility="gone"
+        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:id="@+id/linearLayout_fragment_home"
+            >
+
+            <androidx.appcompat.widget.SearchView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:iconifiedByDefault="false"
+                app:queryHint="Masukan Nama Produk"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                />
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_margin="10dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+
+                app:cardCornerRadius="20dp">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/rv_produk"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:paddingBottom="40dp"
+                    />
+            </ScrollView>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp">
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_tambah"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/custom_button"
+
+        android:drawableTop="@drawable/ic_baseline_add_24"
+
+        android:paddingTop="15dp"
+
+        android:scaleType="fitCenter"
+        android:textColor="#ffff"
+        app:layout_constraintBottom_toBottomOf="@id/linearLayout_fragment_home"
+        app:layout_constraintEnd_toEndOf="parent"
+
+
+        android:layout_marginBottom="100dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

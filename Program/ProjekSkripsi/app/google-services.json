@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "170338215294",
+    "project_id": "skripsi-c7e21",
+    "storage_bucket": "skripsi-c7e21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170338215294:android:fedcb0443638a7bebebf2f",
+        "android_client_info": {
+          "package_name": "com.example.projekskripsi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "170338215294-lbnhf30etq9epos2rek8qv61vslfh126.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDK7_fXPZ6wOX5M3xnocxmzTwrlab8WcYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170338215294-lbnhf30etq9epos2rek8qv61vslfh126.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
