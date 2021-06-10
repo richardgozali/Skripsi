@@ -60,6 +60,9 @@ class home_pedagang_keliling : AppCompatActivity() {
 
                 }
                 else{
+                    val settingfragment = setting_pedagang_keliling.newInstance()
+                    openFragment(settingfragment)
+                    idnav =3
                     return@OnNavigationItemSelectedListener true
                 }
 

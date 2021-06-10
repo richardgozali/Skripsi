@@ -1,5 +1,6 @@
 package com.example.projekskripsi
 
+import CustomProgressDialog
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
@@ -37,6 +38,7 @@ class fragment_menu : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var  adapter: adaptermenu_makanan
+    private val progressDialog = CustomProgressDialog()
 
     private  lateinit var  dtnama: ArrayList<String>
     private  lateinit var  dtidmenu: ArrayList<Int>
@@ -51,7 +53,7 @@ class fragment_menu : Fragment() {
         // creating a new variable for our request queue
         btn_tambah_menu.visibility = View.GONE
         rv_menu.visibility = View.GONE
-        pb_fragment_menu.visibility = View.VISIBLE
+
 
         val queue = Volley.newRequestQueue(context!!)
 
@@ -75,7 +77,7 @@ class fragment_menu : Fragment() {
                     // on below line we are passing our response
                     // to json object to extract data from it.
                     val respObj = JSONObject(response)
-
+                    progressDialog.dialog.dismiss()
                     // below are the strings which we
                     // extract from our json object.
                     Log.d("response", respObj.toString())
@@ -104,7 +106,7 @@ class fragment_menu : Fragment() {
                         rv_menu.layoutManager  = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
                         adapter = adaptermenu_makanan(armenu,context!!)
                         rv_menu.adapter = adapter
-                        pb_fragment_menu.visibility = View.GONE
+
                         rv_menu.visibility = View.VISIBLE
                         btn_tambah_menu.visibility = View.VISIBLE
                     }
@@ -119,10 +121,10 @@ class fragment_menu : Fragment() {
 
                             armenu.add(data)
                         }
+
                         rv_menu.layoutManager  = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL, false)
                         adapter = adaptermenu_makanan(armenu,context!!)
                         rv_menu.adapter = adapter
-                        pb_fragment_menu.visibility = View.GONE
                         rv_menu.visibility = View.VISIBLE
                         btn_tambah_menu.visibility = View.VISIBLE
 
@@ -154,7 +156,7 @@ class fragment_menu : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        progressDialog.show(context!!,"Harap Tunggu...")
         getmenumakanan()
         btn_tambah_menu.setOnClickListener {
                 val fragment = menu_dialog()

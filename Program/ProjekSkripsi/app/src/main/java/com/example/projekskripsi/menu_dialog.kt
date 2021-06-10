@@ -1,5 +1,6 @@
 package com.example.projekskripsi
 
+import CustomProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import org.json.JSONObject
 
 
 class menu_dialog: DialogFragment() {
+    private val progressDialog = CustomProgressDialog()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         getDialog()!!.getWindow()?.setBackgroundDrawableResource(R.drawable.round_corner);
         val view = inflater.inflate(R.layout.menu_custom_dialog, container, false)
@@ -57,10 +59,11 @@ class menu_dialog: DialogFragment() {
                     var msg = respObj.get("msg")
 
                     if(msg.toString() == "success"){
-                        dismiss()
+                        progressDialog.dialog.dismiss()
+
                         val intent = Intent(context, home::class.java)
                         startActivity(intent)
-
+                        home.idnav=2
                     }
                     else{
                         val builder = AlertDialog.Builder(context!!, R.style.Alertlogin)
@@ -69,7 +72,9 @@ class menu_dialog: DialogFragment() {
                         builder.setPositiveButton("OK", null)
                         builder.show()
                     }
-
+                    progressDialog.dialog.dismiss()
+                    btn_tambah_menu.isEnabled = true
+                    dismiss()
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
@@ -86,7 +91,10 @@ class menu_dialog: DialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         btn_tambah_menu.setOnClickListener {
+            progressDialog.show(context!!,"Please Wait...")
+
             tambahmenumakanan(et_nama_menu.text.toString().toLowerCase())
+            btn_tambah_menu.isEnabled = false
         }
     }
     override fun onStart() {

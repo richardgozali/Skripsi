@@ -32,7 +32,7 @@ class chat : AppCompatActivity() {
     var idtoken = ""
     var idtipe = ""
     private  var armenu = arrayListOf<chats>()
-
+    var nama = ""
     private fun getmessage(id_chat_room : String){
         val url = "https://tos.petra.ac.id/~c14170049/Skripsi/getmessage.php?id_chat_room="+ id_chat_room
         val queue = Volley.newRequestQueue(this)

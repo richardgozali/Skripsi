@@ -6,13 +6,14 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_home.*
-var idnav =0
+
 class home : AppCompatActivity() {
+    companion object{
+        var idnav =1
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        var idnav =1
-
        val bottomnav:BottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomnav.setOnNavigationItemSelectedListener(mOnNavigationViewItemSelectedListener)
         val mFragmentManager = supportFragmentManager
@@ -57,8 +58,16 @@ class home : AppCompatActivity() {
                 }
             }
             R.id.nav_person->{
+                if(idnav ==4){
+                    return@OnNavigationItemSelectedListener true
+                }
+                else{
+                    val setting_fragment : setting = setting.newInstance()
+                    idnav = 4
+                    openFragment(setting_fragment)
+                    return@OnNavigationItemSelectedListener true
+                }
 
-                return@OnNavigationItemSelectedListener true
             }
             R.id.nav_book->{
                 if(idnav ==3){
@@ -71,6 +80,7 @@ class home : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
             }
+
         }
         false
     }

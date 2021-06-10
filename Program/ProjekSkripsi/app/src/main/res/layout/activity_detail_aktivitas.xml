@@ -160,7 +160,7 @@
                             <TextView
                                 android:layout_marginLeft="10dp"
                                 android:layout_marginRight="10dp"
-
+                                android:visibility="gone"
                                 android:fontFamily="@font/anton"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -176,6 +176,7 @@
                                 android:id="@+id/tv_total_order"
                                 android:text="Rp5000"
                                 android:textSize="30dp"
+                                android:visibility="gone"
                                 android:textAlignment="center"
                                 android:textColor=" #000000"
                                 android:fontFamily="@font/anton"

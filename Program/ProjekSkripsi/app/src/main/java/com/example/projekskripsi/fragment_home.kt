@@ -1,10 +1,12 @@
 package com.example.projekskripsi
 
+import CustomProgressDialog
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -15,8 +17,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -26,15 +28,18 @@ import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_order_pelanggan.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_menu.*
 import org.json.JSONException
@@ -58,6 +63,7 @@ class fragment_home : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var  adapter: adapaterpedagang_keliling
+    private val progressDialog = CustomProgressDialog()
 
     private  lateinit var  dtnama: ArrayList<String>
     private  lateinit var  dtidpedagang : ArrayList<Int>
@@ -66,10 +72,10 @@ class fragment_home : Fragment() {
     private  lateinit var dtlongitude : ArrayList<Double>
 
     private  var armenu = arrayListOf<pedagang_keliling>()
-
+    private  var temp = arrayListOf<pedagang_keliling>()
     private var locationManager : LocationManage? = null
     private var location : Location? = null
-
+    private lateinit var map: GoogleMap
     private var coba :Location? = null
 
     private fun updatetoken(token:String){
@@ -164,7 +170,7 @@ class fragment_home : Fragment() {
                     Log.d("response", respObj.toString())
                     var msg = respObj.get("msg")
 
-                    if(msg.toString() == "success"){
+                    val unit = if (msg.toString() == "success") {
                         for (i in 0 until respObj.length() - 1) {
                             val pedagang = respObj.getJSONObject(i.toString())
                             val id_pedagang = pedagang.get("id_pedagang")
@@ -174,20 +180,25 @@ class fragment_home : Fragment() {
                             val longitude = pedagang.get("longitude")
                             val r_latitude = pedagang.get("region_latitude")
                             val r_longitude = pedagang.get("region_longitude")
-                            Log.d("nama" , nama_lengkap.toString())
-                            if(location != null){
+                            Log.d("nama", nama_lengkap.toString())
+                            if (location != null) {
                                 val jarak = haversine()
-                                var akhir = jarak.haversine(location!!.latitude, location!!.longitude,latitude.toString().toDouble(), longitude.toString().toDouble() )
-                                val hasilakhir:Double = String.format("%.1f", akhir).toDouble()
-                                if(akhir.toInt() < 5 ){
+                                var akhir = jarak.haversine(
+                                    location!!.latitude,
+                                    location!!.longitude,
+                                    latitude.toString().toDouble(),
+                                    longitude.toString().toDouble()
+                                )
+                                val hasilakhir: Double = akhir
+                                val hasil = Math. round(akhir * 10.0) / 10.0
+                                if (hasil <= 1.5) {
                                     dtnama.add(nama_lengkap.toString())
                                     dtidpedagang.add(id_pedagang.toString().toInt())
                                     dtlongitude.add(longitude.toString().toDouble())
                                     dtlatitude.add(latitude.toString().toDouble())
-                                    dtlokasi.add(hasilakhir)
+                                    dtlokasi.add(hasil.toDouble())
                                 }
-                            }
-                            else{
+                            } else {
                                 dtlokasi.add(0.0)
                             }
 
@@ -202,13 +213,15 @@ class fragment_home : Fragment() {
 
                             armenu.add(data)
                         }
-                        rv_list_pedagang.layoutManager  = LinearLayoutManager(context)
+                        armenu.sortBy{it.jarak}
+                        rv_list_pedagang.layoutManager = LinearLayoutManager(context)
                         adapter = context?.let { adapaterpedagang_keliling(armenu, it) }!!
                         rv_list_pedagang.adapter = adapter
-                        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+                        progressDialog.dialog.dismiss()
+                        val mapFragment =
+                            childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
                         mapFragment?.getMapAsync(callback)
-                    }
-                    else {
+                    } else {
 
 
                     }
@@ -226,6 +239,7 @@ class fragment_home : Fragment() {
         // a json object request.
         queue.add(request)
     }
+
     private fun updatelokasi(id_pelanggan: String, longitude: String , latitude:String) {
         // url to post our data
         val url = "https://tos.petra.ac.id/~c14170049/Skripsi/updatelokasipelanggan.php"
@@ -295,6 +309,200 @@ class fragment_home : Fragment() {
         val url = "https://tos.petra.ac.id/~c14170049/Skripsi/getpedagangkelilingbyname.php?nama_lengkap="+nama
         // creating a new variable for our request queue
         val queue = Volley.newRequestQueue(context!!)
+        // on below line we are calling a string
+        // request method to post the data to our API
+        // in this we are calling a post method.
+
+        val request: StringRequest = object : StringRequest(
+            Request.Method.GET,
+            url,
+            Response.Listener { response ->
+                // inside on response method we are
+                // hiding our progress bar
+                // and setting data to edit text as empty
+                // on below line we are displaying a success toast message.
+
+                try {
+                    // on below line we are passing our response
+                    // to json object to extract data from it.
+                    val respObj = JSONObject(response)
+
+                    // below are the strings which we
+                    // extract from our json object.
+                    Log.d("response", respObj.toString())
+                    var msg = respObj.get("msg")
+
+                    if(msg.toString() == "success"){
+                        for (i in 0 until respObj.length() - 1) {
+                            val pedagang = respObj.getJSONObject(i.toString())
+                            val id_pedagang = pedagang.get("id_pedagang")
+                            val telepon = pedagang.get("telepon")
+                            val nama_lengkap = pedagang.get("nama_lengkap")
+                            val latitude = pedagang.get("langitude")
+                            val longitude = pedagang.get("longitude")
+                            val r_latitude = pedagang.get("region_latitude")
+                            val r_longitude = pedagang.get("region_longitude")
+                            Log.d("nama" , nama_lengkap.toString())
+                            if(location != null){
+                                val jarak = haversine()
+                                var akhir = jarak.haversine(location!!.latitude, location!!.longitude,latitude.toString().toDouble(), longitude.toString().toDouble() )
+                                val hasil = Math. round(akhir * 10.0) / 10.0
+                                dtlokasi.add(hasil)
+                                dtnama.add(nama_lengkap.toString())
+                                dtidpedagang.add(id_pedagang.toString().toInt())
+                                dtlongitude.add(longitude.toString().toDouble())
+                                dtlatitude.add(latitude.toString().toDouble())
+                            }
+                            else{
+                                dtlokasi.add(0.0)
+                            }
+
+                        }
+
+                        for (position in dtnama.indices) {
+                            val data = pedagang_keliling(
+                                dtidpedagang[position],
+                                dtnama[position],
+                                dtlokasi[position]
+                            )
+
+                            armenu.add(data)
+                        }
+
+                        progressDialog.dialog.dismiss()
+                        rv_list_pedagang.layoutManager  = LinearLayoutManager(context)
+                        adapter = context?.let { adapaterpedagang_keliling(armenu, it) }!!
+                        rv_list_pedagang.adapter = adapter
+                        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+                        mapFragment?.getMapAsync(callback)
+                    }
+                    else {
+
+
+                    }
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            Response.ErrorListener { error -> // method to handle errors.
+
+            }) {
+
+        }
+        // below line is to make
+        // a json object request.
+        queue.add(request)
+    }
+    private fun getregionpedagangkeliling(){
+        val url = "https://tos.petra.ac.id/~c14170049/Skripsi/getpedagangkeliling.php"
+        progressDialog.show(context!!,"Please Wait...")
+        // creating a new variable for our request queue
+        val queue = Volley.newRequestQueue(context!!)
+
+        // on below line we are calling a string
+        // request method to post the data to our API
+        // in this we are calling a post method.
+
+        val request: StringRequest = object : StringRequest(
+            Request.Method.GET,
+            url,
+            Response.Listener { response ->
+                // inside on response method we are
+                // hiding our progress bar
+                // and setting data to edit text as empty
+                // on below line we are displaying a success toast message.
+
+                try {
+                    // on below line we are passing our response
+                    // to json object to extract data from it.
+                    val respObj = JSONObject(response)
+
+                    // below are the strings which we
+                    // extract from our json object.
+                    Log.d("response", respObj.toString())
+                    var msg = respObj.get("msg")
+
+                    val unit = if (msg.toString() == "success") {
+                        for (i in 0 until respObj.length() - 1) {
+                            val pedagang = respObj.getJSONObject(i.toString())
+                            val id_pedagang = pedagang.get("id_pedagang")
+                            val telepon = pedagang.get("telepon")
+                            val nama_lengkap = pedagang.get("nama_lengkap")
+                            val latitude = pedagang.get("langitude")
+                            val longitude = pedagang.get("longitude")
+                            val r_latitude = pedagang.get("region_latitude")
+                            val r_longitude = pedagang.get("region_longitude")
+                            Log.d("nama", nama_lengkap.toString())
+                            if (location != null) {
+                                val jarak = haversine()
+                                var akhir = jarak.haversine(
+                                    location!!.latitude,
+                                    location!!.longitude,
+                                    r_latitude.toString().toDouble(),
+                                    r_longitude.toString().toDouble()
+                                )
+                                val jarak2 = haversine()
+                                val akhir2 = jarak2.haversine(
+                                    location!!.latitude,
+                                    location!!.longitude,
+                                    latitude.toString().toDouble(),
+                                    longitude.toString().toDouble()
+                                )
+                                val hasil = Math. round(akhir * 10.0) / 10.0
+                                val hasil2 = Math.round(akhir2 *10.0)/10.0
+                                if (hasil <= 1) {
+                                    dtnama.add(nama_lengkap.toString())
+                                    dtidpedagang.add(id_pedagang.toString().toInt())
+                                    dtlongitude.add(longitude.toString().toDouble())
+                                    dtlatitude.add(latitude.toString().toDouble())
+                                    dtlokasi.add(hasil2.toDouble())
+                                }
+                            } else {
+                                dtlokasi.add(0.0)
+                            }
+
+                        }
+
+                        for (position in dtnama.indices) {
+                            val data = pedagang_keliling(
+                                dtidpedagang[position],
+                                dtnama[position],
+                                dtlokasi[position]
+                            )
+
+                            armenu.add(data)
+                        }
+                        armenu.sortBy{it.jarak}
+                        rv_list_pedagang.layoutManager = LinearLayoutManager(context)
+                        adapter = context?.let { adapaterpedagang_keliling(armenu, it) }!!
+                        rv_list_pedagang.adapter = adapter
+                        progressDialog.dialog.dismiss()
+                        val mapFragment =
+                            childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+                        mapFragment?.getMapAsync(callback)
+                    } else {
+
+
+                    }
+
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            Response.ErrorListener { error -> // method to handle errors.
+
+            }) {
+
+        }
+        // below line is to make
+        // a json object request.
+        queue.add(request)
+    }
+    private fun getpedagangterdekat(){
+        val url = "https://tos.petra.ac.id/~c14170049/Skripsi/getpedagangkeliling.php"
+        // creating a new variable for our request queue
+        val queue = Volley.newRequestQueue(context!!)
 
         // on below line we are calling a string
         // request method to post the data to our API
@@ -355,17 +563,12 @@ class fragment_home : Fragment() {
 
                             armenu.add(data)
                         }
-                        rv_list_pedagang.layoutManager  = LinearLayoutManager(context)
-                        adapter = context?.let { adapaterpedagang_keliling(armenu, it) }!!
-                        rv_list_pedagang.adapter = adapter
-                        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-                        mapFragment?.getMapAsync(callback)
+                        armenu.sortBy { it.jarak }
+                        temp.add(armenu.get(0))
+                        val pIntent2 = Intent (context,detail_pedagang::class.java)
+                        pIntent2.putExtra("id_pedagang", temp.get(0).id_pedagang_keliling)
+                        startActivity(pIntent2)
                     }
-                    else {
-
-
-                    }
-
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
@@ -396,7 +599,6 @@ class fragment_home : Fragment() {
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {}
     }
-
     private val callback = OnMapReadyCallback { googleMap ->
         if(location == null){
             val sydney = LatLng(-7.4057672,112.696388)
@@ -408,15 +610,16 @@ class fragment_home : Fragment() {
                             .snippet("Pedagang Sayur")
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                     )
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15.0f));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14.0f));
             Log.d("marker" , sydney.toString())
         }
         else {
             val sydney = location?.latitude?.let { location?.longitude?.let { it1 -> LatLng(it, it1) } }
             googleMap.addMarker(sydney?.let { MarkerOptions().position(it).title("Your's") })
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15.0f));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 14.0f));
             latlnguser = location?.latitude?.let { location?.longitude?.let { it1 -> LatLng(it, it1) } }
         }
+
         for (position in dtnama.indices) {
             val latitudes = dtlatitude[position]
             val longitudes =dtlongitude[position]
@@ -433,9 +636,12 @@ class fragment_home : Fragment() {
 
         }
     }
-
+    private val delete =  OnMapReadyCallback { googleMap ->
+       googleMap.clear()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        progressDialog.show(context!!,"Harap Tunggu...")
         getpedagangkeliling()
         dtnama = arrayListOf()
         dtidpedagang = arrayListOf()
@@ -493,6 +699,7 @@ class fragment_home : Fragment() {
     }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         refresh2.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(context!!, R.color.quantum_white_100))
         refresh2.setColorSchemeColors(Color.GREEN)
 
@@ -503,6 +710,9 @@ class fragment_home : Fragment() {
             dtlatitude = arrayListOf()
             dtlongitude = arrayListOf()
             armenu = arrayListOf<pedagang_keliling>()
+            progressDialog.show(context!!,"Please Wait...")
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment?.getMapAsync(delete)
             getpedagangkeliling()
             refresh2.isRefreshing = false
         }
@@ -520,11 +730,63 @@ class fragment_home : Fragment() {
                 dtlatitude = arrayListOf()
                 dtlongitude = arrayListOf()
                 armenu = arrayListOf<pedagang_keliling>()
+                progressDialog.show(context!!,"Please Wait...")
+                val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                mapFragment?.getMapAsync(delete)
                 getpedagangkelilingbyname(search_bar.query.toString())
                 return false
             }
 
         })
+
+        btn_filter.setOnClickListener {
+            lateinit var dialog:AlertDialog
+
+            // Initialize an array of colors
+            val array = arrayOf("Lokasi Pedagang Keliling Berjualan","Pedagang Keliling Terdekat")
+
+            // Initialize a new instance of alert dialog builder object
+            val builder = AlertDialog.Builder(context!!)
+
+            // Set a title for alert dialog
+            builder.setTitle("Pilih Filter.")
+
+            // Set the single choice items for alert dialog with initial selection
+            builder.setSingleChoiceItems(array,-1) { _, which ->
+                dtnama = arrayListOf()
+                dtidpedagang = arrayListOf()
+                dtlokasi = arrayListOf()
+                dtlatitude = arrayListOf()
+                dtlongitude = arrayListOf()
+                armenu = arrayListOf<pedagang_keliling>()
+                // Get the dialog selected item
+                progressDialog.show(context!!,"Please Wait...")
+                val filter = array[which]
+                Log.e("Filter", filter.toString())
+                if (filter == "Lokasi Pedagang Keliling Berjualan") {
+
+
+                    val mapFragment =
+                        childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                    mapFragment?.getMapAsync(delete)
+                    getregionpedagangkeliling()
+                }
+                else{
+                    getpedagangterdekat()
+
+
+                }
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+
+
+            // Initialize the AlertDialog using builder object
+            dialog = builder.create()
+
+            // Finally, display the alert dialog
+            dialog.show()
+        }
     }
 
     override fun onCreateView(

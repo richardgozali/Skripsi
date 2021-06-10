@@ -153,17 +153,21 @@ class adapterdetail_pedagang(private val listprodukdetail : ArrayList<produk_det
 
                     // below are the strings which we
                     // extract from our json object.
-                    Log.d("response", respObj.toString())
+
                     AlertDialog.Builder(conten)
                         // Judul
                         .setTitle("Perhatian")
                         // Pesan yang di tamopilkan
                         .setMessage("Data Telah Ditambah")
-                        .setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i -> })
                         .show()
+                        .dismiss()
+
                     val pIntent2 = Intent (conten,detail_pedagang::class.java)
-                    pIntent2.putExtra("id_pedagang",id_pedagang)
+                    pIntent2.putExtra("id_pedagang",id_pedagang.toInt())
                     pIntent2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    AlertDialog.Builder(conten).setOnDismissListener {
+
+                    }
                     conten.startActivity(pIntent2)
 
                 } catch (e: JSONException) {

@@ -37,7 +37,7 @@ class Registrasi : AppCompatActivity() {
             Log.d("Maps" , "Maps Activated")
         }
         else{
-            Log.d("error" , "Maps Gagag")
+            Log.d("error" , "Maps gagal")
         }
         // Initialize the SDK
 
@@ -103,7 +103,7 @@ class Registrasi : AppCompatActivity() {
         //  buat fungsi untuk pembuatan daftar API.
         btn_daftar.setOnClickListener {
             if(tiperegis !="Pedagang Keliling" ){
-                if(lokasi == null && et_nomer_telepone.text.toString() != "" && et_password.text.toString() != "" && et_nama.text.toString() != "" ){
+                if(et_nomer_telepone.text.toString() != "" && et_password.text.toString() != "" && et_nama.text.toString() != "" ){
                     postDatapelanggan("+62"+et_nomer_telepone.getText().toString(), et_password.getText().toString(),et_nama.text.toString());
                 }
                 else{

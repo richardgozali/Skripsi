@@ -171,6 +171,7 @@
                                     android:textAlignment="center"
                                     android:text="Total :"
                                     android:textSize="30dp"
+
                                     android:layout_weight="1"
                                     android:textColor=" #000000"
                                     />
@@ -180,6 +181,7 @@
                                     android:id="@+id/tv_total_order"
                                     android:text="Rp5000"
                                     android:textSize="30dp"
+
                                     android:textAlignment="center"
                                     android:textColor=" #000000"
                                     android:fontFamily="@font/anton"
@@ -192,7 +194,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="10dp"
-                                android:text="Terima Orderan"
+                                android:text="Selesai"
                                 android:id="@+id/btn_update"
                                 android:background="#06a94d"
                                 android:textColor="#FFFFFF"

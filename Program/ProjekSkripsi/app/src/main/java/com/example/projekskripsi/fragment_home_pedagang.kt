@@ -1,24 +1,23 @@
 package com.example.projekskripsi
 
+import CustomProgressDialog
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.TypedArray
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.Response
@@ -32,6 +31,7 @@ import kotlinx.android.synthetic.main.fragment_activity.*
 import kotlinx.android.synthetic.main.fragment_home_pedagang.*
 import org.json.JSONException
 import org.json.JSONObject
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,7 +53,7 @@ class fragment_home_pedagang : Fragment() {
     //libary lokasi dan variable lokasi
     private var locationManager : LocationManager? = null
     private var location : Location? = null
-
+    private val progressDialog = CustomProgressDialog()
     private lateinit var  adapter: adapterproduk
 
     private  lateinit var  dtnama_produk: ArrayList<String>
@@ -344,7 +344,7 @@ class fragment_home_pedagang : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+     
         dtnama_produk = arrayListOf()
         dt_harga = arrayListOf()
         dtsatuan = arrayListOf()
@@ -353,7 +353,6 @@ class fragment_home_pedagang : Fragment() {
         dtjenis = arrayListOf()
         dt_tipe = arrayListOf()
         getjenisproduk()
-
 
         //request code untuk mengakases lokasi
         if (this.context?.let {

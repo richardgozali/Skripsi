@@ -1,6 +1,6 @@
 package com.example.projekskripsi
 
-import android.app.Activity
+import CustomProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -33,7 +33,7 @@ class detail_pedagang : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
+    private val progressDialog = CustomProgressDialog()
     private lateinit var  adapter: adapterdetail_pedagang
     private  lateinit var  dtnama: ArrayList<String>
     private  lateinit var  dtfoto : ArrayList<String>
@@ -147,7 +147,7 @@ class detail_pedagang : AppCompatActivity(), OnMapReadyCallback {
                         }
                         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
                         mapFragment?.getMapAsync(this)
-                        pb_detail_pedagang.visibility = View.GONE
+                        progressDialog.dialog.dismiss()
                     }
 
                 } catch (e: JSONException) {
@@ -316,7 +316,11 @@ class detail_pedagang : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
+    override fun onBackPressed() {
+        val next = Intent(applicationContext, home::class.java)
+        startActivity(next)
 
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         idorder = "0"
@@ -331,10 +335,12 @@ class detail_pedagang : AppCompatActivity(), OnMapReadyCallback {
         dtidproduk = arrayListOf()
         dt_tipe= arrayListOf()
         dtunit = arrayListOf()
-        pb_detail_pedagang.visibility = View.VISIBLE
+        progressDialog.show(this,"Harap Tunggu...")
         iv_back.setOnClickListener{
-            onBackPressed()
+            val next = Intent(applicationContext, home::class.java)
+            startActivity(next)
         }
+
         if(id_pedagang == 0){
             id_pedagang = intent.getIntExtra("id_pedagang", 0)
         }

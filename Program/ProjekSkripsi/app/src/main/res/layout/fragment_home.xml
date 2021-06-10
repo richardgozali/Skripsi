@@ -29,20 +29,34 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.core.widget.NestedScrollView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
 
                     <SearchView
                         android:id="@+id/search_bar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:layout_marginBottom="10dp"
                         android:layout_weight="1"
                         android:elevation="30dp"
                         android:iconifiedByDefault="false"
                         android:queryHint="Masukan Nama Pedagang Keliling" />
-                </androidx.core.widget.NestedScrollView>
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/btn_filter"
+                        android:background="#add8e6"
+                        android:textColor="#ffff"
+                        android:text="filter"
+                        />
+                </LinearLayout>
 
                 <fragment
                     android:id="@+id/map"
