@@ -1,0 +1,2 @@
+# Skripsi
+Skripsi Richard Gozali
